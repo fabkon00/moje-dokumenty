@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>mObywatel</title>
+    <style>
+        body { margin: 0; background: #F5F6FA; font-family: -apple-system, sans-serif; overflow: hidden; }
+        
+        /* NAGŁÓWEK */
+        .header { background: #1A2B4C; height: 110px; padding: 55px 20px 0; color: white; display: flex; justify-content: space-between; align-items: center; z-index: 100; position: relative; }
+        .header b { font-size: 22px; }
+
+        /* KARTA */
+        .card { margin: 15px; height: 260px; background: white; border-radius: 20px; position: relative; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border: 0.5px solid #ddd; }
+        
+        /* 1. TŁO GILOSZ - EFEKT GŁĘBI */
+        .bg-gilosz { 
+            position: absolute; width: 150%; height: 150%; top: -25%; left: -25%;
+            background: url('https://i.imgur.com/8m4F9nJ.png'); background-size: cover; opacity: 0.25; 
+            transition: 0.05s linear; z-index: 1;
+        }
+
+        /* 2. DANE I ZDJĘCIE */
+        .content { position: absolute; width: 100%; height: 100%; padding: 20px; display: flex; z-index: 5; transition: 0.05s linear; }
+        .photo { width: 105px; height: 140px; border-radius: 12px; object-fit: cover; border: 0.5px solid #ccc; background: #eee; }
+        .info { margin-left: 20px; }
+        .label { font-size: 9px; color: #777; margin-top: 8px; letter-spacing: 0.5px; }
+        .val { font-size: 17px; font-weight: bold; color: #1A2B4C; }
+
+        /* 3. ORZEŁ - HOLOGRAFICZNY, ŚWIECĄCY, OBRACAJĄCY SIĘ */
+        .eagle { 
+            position: absolute; bottom: 35px; left: 45px; width: 50px; z-index: 10;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.9)) brightness(1.2); 
+            opacity: 0.85; transition: 0.05s linear;
+        }
+
+        /* 4. NAPIS RZECZPOSPOLITA - OFICJALNA CZCIONKA */
+        .rp-text { 
+            position: absolute; top: 20px; right: 20px; 
+            font-family: "Palatino", "Georgia", serif; /* Najlepszy font dla RP */
+            font-size: 10px; font-weight: bold; color: rgba(180, 0, 0, 0.7); letter-spacing: 1.2px;
+            transition: 0.05s linear; z-index: 10;
+        }
+
+        /* 5. FLAGA FALUJĄCA */
+        .flag-container { position: absolute; bottom: 20px; right: 20px; border-radius: 3px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 10; }
+        .flag-wave { 
+            width: 32px; height: 20px; 
+            background: linear-gradient(to bottom, white 50%, #dc143c 50%); 
+            animation: waveAnim 2.5s infinite ease-in-out; 
+        }
+
+        @keyframes waveAnim {
+            0%, 100% { transform: scaleY(1) skewY(0deg); }
+            50% { transform: scaleY(1.1) skewY(4deg); }
+        }
+
+        /* STATUS WAŻNOŚCI */
+        .status { position: absolute; bottom: 15px; width: calc(100% - 30px); margin: 0 15px; background: #e8f5e9; padding: 10px; border-radius: 10px; color: #2e7d32; font-weight: bold; text-align: center; font-size: 13px; z-index: 15; }
+
+        /* DOLNY PASEK MENU */
+        .nav { position: fixed; bottom: 0; width: 100%; height: 85px; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; }
+        .nav-item { text-align: center; font-size: 10px; color: #999; }
+        .active { color: #1A2B4C; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header"><b>mObywatel</b> <div style="width:34px;height:34px;background:rgba(255,255,255,0.2);border-radius:50%;"></div></div>
+
+    <div class="card">
+        <div class="bg-gilosz" id="bg"></div>
+        <div class="content" id="content">
+            <img src="" id="user-img" class="photo">
+            <div class="info">
+                <div class="label">NAZWISKO</div><div class="val" id="v-nazw">KOWALSKI</div>
+                <div class="label">IMIĘ (IMIONA)</div><div class="val" id="v-imie">JAN ADAM</div>
+                <div class="label">PESEL</div><div class="val" id="v-pesel">90010112345</div>
+            </div>
+        </div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Coat_of_arms_of_Poland.svg/500px-Coat_of_arms_of_Poland.svg.png" class="eagle" id="eagle">
+        <div class="rp-text" id="rp">RZECZPOSPOLITA POLSKA</div>
+        <div class="flag-container"><div class="flag-wave"></div></div>
+        <div class="status">✓ Dokument ważny</div>
+    </div>
+
+    <div class="nav">
+        <div class="nav-item">Pulpit</div>
+        <div class="nav-item active">Dokumenty</div>
+        <div class="nav-item">Usługi</div>
+        <div class="nav-item">Więcej</div>
+    </div>
+
+    <script>
+        // Wczytywanie Twoich danych
+        document.getElementById('v-imie').innerText = localStorage.getItem('m_imie') || "JAN";
+        document.getElementById('v-nazw').innerText = localStorage.getItem('m_nazwisko') || "KOWALSKI";
+        document.getElementById('v-pesel').innerText = localStorage.getItem('m_pesel') || "90010112345";
+        const img = localStorage.getItem('m_foto');
+        if(img) document.getElementById('user-img').src = img;
+
+        // MAGIA RUCHU 3D (ŻYROSKOP)
+        window.addEventListener('deviceorientation', (e) => {
+            let x = e.gamma; // Przechył na boki
+            let y = e.beta;  // Przechył góra/dół
+
+            // Ograniczenia dla płynności
+            if (x > 25) x = 25; if (x < -25) x = -25;
+            if (y > 60) y = 60; if (y < 10) y = 10;
+
+            // Tło (Paralaksa ujemna - rusza się przeciwnie)
+            document.getElementById('bg').style.transform = `translate(${x/-1.5}px, ${y/-3}px)`;
+            
+            // Dane (Minimalny ruch)
+            document.getElementById('content').style.transform = `translate(${x/4}px, ${y/8}px)`;
+            
+            // Orzeł (Mocny ruch + efekt połysku/rotacji)
+            document.getElementById('eagle').style.transform = `translate(${x*1.8}px, ${y*1.2}px) rotateY(${x}deg)`;
+            
+            // Napis RP (Średni ruch)
+            document.getElementById('rp').style.transform = `translate(${x*0.6}px, ${y*0.6}px)`;
+        });
+    </script>
+</body>
+</html>
