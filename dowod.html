@@ -4,125 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="apple-mobile-web-app-title" content="mObywatel">
     <title>mObywatel</title>
     <style>
-        body { margin: 0; background: #F5F6FA; font-family: -apple-system, sans-serif; overflow: hidden; }
+        body { margin: 0; background: #ffffff; font-family: -apple-system, sans-serif; overflow: hidden; color: #1a1a1a; }
         
-        /* NAGŁÓWEK */
-        .header { background: #1A2B4C; height: 110px; padding: 55px 20px 0; color: white; display: flex; justify-content: space-between; align-items: center; z-index: 100; position: relative; }
-        .header b { font-size: 22px; }
+        /* BIAŁY NAGŁÓWEK Z OBRAZKA */
+        .top-nav { background: #ffffff; height: 110px; padding: 50px 20px 0; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid #eee;}
+        .wroc { color: #007aff; font-size: 17px; cursor: pointer; display: flex; align-items: center;}
+        .header-title { font-size: 17px; font-weight: bold; position: absolute; left: 50%; transform: translateX(-50%); }
+        .circle-init { width: 32px; height: 32px; background: #e6f0fa; color: #007aff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;}
 
-        /* KARTA */
-        .card { margin: 15px; height: 260px; background: white; border-radius: 20px; position: relative; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); border: 0.5px solid #ddd; }
+        /* SEKCJA DATY */
+        .date-ref { text-align: center; color: #777; font-size: 11px; margin-top: 15px;}
+
+        /* NOWOCZESNA KARTA mDOWÓD (Błękitne tło) */
+        .card { 
+            margin: 20px auto; width: 92%; height: 360px; 
+            background: linear-gradient(135deg, #f0f7fe 0%, #e6f1fb 100%); 
+            border-radius: 20px; 
+            position: relative; overflow: hidden; 
+            border: 0.5px solid #eee;
+        }
         
-        /* 1. TŁO GILOSZ - EFEKT GŁĘBI */
-        .bg-gilosz { 
-            position: absolute; width: 150%; height: 150%; top: -25%; left: -25%;
-            background: url('https://i.imgur.com/8m4F9nJ.png'); background-size: cover; opacity: 0.25; 
-            transition: 0.05s linear; z-index: 1;
+        /* DUŻY KONTUR ORŁA W TLE */
+        .card-bg-eagle {
+            position: absolute; width: 220px; bottom: -20px; right: -20px;
+            opacity: 0.08; filter: grayscale(1); transition: transform 0.1s linear;
         }
 
-        /* 2. DANE I ZDJĘCIE */
-        .content { position: absolute; width: 100%; height: 100%; padding: 20px; display: flex; z-index: 5; transition: 0.05s linear; }
-        .photo { width: 105px; height: 140px; border-radius: 12px; object-fit: cover; border: 0.5px solid #ccc; background: #eee; }
-        .info { margin-left: 20px; }
-        .label { font-size: 9px; color: #777; margin-top: 8px; letter-spacing: 0.5px; }
-        .val { font-size: 17px; font-weight: bold; color: #1A2B4C; }
+        /* WARSTWA TREŚCI */
+        .card-body { position: relative; z-index: 5; padding: 25px 20px; display: flex; }
 
-        /* 3. ORZEŁ - HOLOGRAFICZNY, ŚWIECĄCY, OBRACAJĄCY SIĘ */
-        .eagle { 
-            position: absolute; bottom: 35px; left: 45px; width: 50px; z-index: 10;
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.9)) brightness(1.2); 
-            opacity: 0.85; transition: 0.05s linear;
+        /* SEKCJA LEWA (ZDJĘCIE I FLAGA) */
+        .photo-pane { width: 42%; position: relative;}
+        
+        /* Przezroczyste zdjęcie z białą ramką - jak na obrazku */
+        .photo-wrap { width: 105px; height: 140px; border: 4px solid #ffffff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden;}
+        .photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .flag-pane { width: 45px; margin-top: 15px;}
+        .flag-pane img { width: 100%; object-fit: contain;}
+
+        /* SEKCJA PRAWA (DANE) */
+        .data-pane { width: 58%; padding-left: 10px;}
+        .data-item { margin-bottom: 12px;}
+        .val { font-size: 15px; font-weight: 800; color: #1a1a1a; text-transform: uppercase;}
+        .lab { font-size: 9px; color: #777;}
+
+        /* ZIELONY STATUS - JAK NA OBRAZKU */
+        .status-pane {
+            position: absolute; bottom: 85px; width: calc(100% - 30px); margin: 0 15px;
+            background: #ffffff; border-radius: 15px; padding: 12px;
+            display: flex; align-items: center; border: 1px solid #e0e0e0; z-index: 10;
         }
+        .status-circle { width: 22px; height: 22px; background: #e8f5e9; color: #2e7d32; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-weight: bold; font-size: 12px; border: 1px solid #c8e6c9;}
+        .status-txt { color: #2e7d32; font-weight: bold; font-size: 14px;}
 
-        /* 4. NAPIS RZECZPOSPOLITA - OFICJALNA CZCIONKA */
-        .rp-text { 
-            position: absolute; top: 20px; right: 20px; 
-            font-family: "Palatino", "Georgia", serif; /* Najlepszy font dla RP */
-            font-size: 10px; font-weight: bold; color: rgba(180, 0, 0, 0.7); letter-spacing: 1.2px;
-            transition: 0.05s linear; z-index: 10;
+        /* PASEK SKRÓTÓW NA DOLE DOWODU */
+        .skroty-bar {
+            position: absolute; bottom: 0; width: 100%; height: 75px;
+            background: #ffffff; border-top: 1px solid #e0e0e0;
+            display: flex; justify-content: space-around; align-items: center; z-index: 10; padding: 0 10px 5px 10px; box-sizing: border-box;
         }
-
-        /* 5. FLAGA FALUJĄCA */
-        .flag-container { position: absolute; bottom: 20px; right: 20px; border-radius: 3px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 10; }
-        .flag-wave { 
-            width: 32px; height: 20px; 
-            background: linear-gradient(to bottom, white 50%, #dc143c 50%); 
-            animation: waveAnim 2.5s infinite ease-in-out; 
-        }
-
-        @keyframes waveAnim {
-            0%, 100% { transform: scaleY(1) skewY(0deg); }
-            50% { transform: scaleY(1.1) skewY(4deg); }
-        }
-
-        /* STATUS WAŻNOŚCI */
-        .status { position: absolute; bottom: 15px; width: calc(100% - 30px); margin: 0 15px; background: #e8f5e9; padding: 10px; border-radius: 10px; color: #2e7d32; font-weight: bold; text-align: center; font-size: 13px; z-index: 15; }
-
-        /* DOLNY PASEK MENU */
-        .nav { position: fixed; bottom: 0; width: 100%; height: 85px; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; }
-        .nav-item { text-align: center; font-size: 10px; color: #999; }
-        .active { color: #1A2B4C; font-weight: bold; }
+        .skrot-item { text-align: center; color: #1a1a1a; font-size: 9px; font-weight: 600;}
+        .skrot-circle { width: 38px; height: 38px; background: #f0f3f8; border-radius: 50%; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center;}
+        .skrot-circle img { width: 20px; height: 20px; filter: grayscale(1) opacity(0.8);}
     </style>
 </head>
 <body>
 
-    <div class="header"><b>mObywatel</b> <div style="width:34px;height:34px;background:rgba(255,255,255,0.2);border-radius:50%;"></div></div>
+    <div class="top-nav">
+        <div class="wroc">❮ Wróć</div>
+        <div class="header-title">mDowód</div>
+        <div class="circle-init" id="u-init">M</div>
+    </div>
+
+    <div class="date-ref">Czas: <span id="u-time">9:41:21 17.02.2025</span></div>
 
     <div class="card">
-        <div class="bg-gilosz" id="bg"></div>
-        <div class="content" id="content">
-            <img src="" id="user-img" class="photo">
-            <div class="info">
-                <div class="label">NAZWISKO</div><div class="val" id="v-nazw">KOWALSKI</div>
-                <div class="label">IMIĘ (IMIONA)</div><div class="val" id="v-imie">JAN ADAM</div>
-                <div class="label">PESEL</div><div class="val" id="v-pesel">90010112345</div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Coat_of_arms_of_Poland.svg/500px-Coat_of_arms_of_Poland.svg.png" class="card-bg-eagle" id="eagle-bg">
+        
+        <div class="card-body">
+            <div class="photo-pane">
+                <div class="photo-wrap"><img src="" id="u-photo"></div>
+                <div class="flag-pane">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Flag_of_Poland_%28normalized%29.svg/100px-Flag_of_Poland_%28normalized%29.svg.png" alt="Polska flaga">
+                </div>
             </div>
-        </div>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Coat_of_arms_of_Poland.svg/500px-Coat_of_arms_of_Poland.svg.png" class="eagle" id="eagle">
-        <div class="rp-text" id="rp">RZECZPOSPOLITA POLSKA</div>
-        <div class="flag-container"><div class="flag-wave"></div></div>
-        <div class="status">✓ Dokument ważny</div>
-    </div>
-
-    <div class="nav">
-        <div class="nav-item">Pulpit</div>
-        <div class="nav-item active">Dokumenty</div>
-        <div class="nav-item">Usługi</div>
-        <div class="nav-item">Więcej</div>
-    </div>
-
-    <script>
-        // Wczytywanie Twoich danych
-        document.getElementById('v-imie').innerText = localStorage.getItem('m_imie') || "JAN";
-        document.getElementById('v-nazw').innerText = localStorage.getItem('m_nazwisko') || "KOWALSKI";
-        document.getElementById('v-pesel').innerText = localStorage.getItem('m_pesel') || "90010112345";
-        const img = localStorage.getItem('m_foto');
-        if(img) document.getElementById('user-img').src = img;
-
-        // MAGIA RUCHU 3D (ŻYROSKOP)
-        window.addEventListener('deviceorientation', (e) => {
-            let x = e.gamma; // Przechył na boki
-            let y = e.beta;  // Przechył góra/dół
-
-            // Ograniczenia dla płynności
-            if (x > 25) x = 25; if (x < -25) x = -25;
-            if (y > 60) y = 60; if (y < 10) y = 10;
-
-            // Tło (Paralaksa ujemna - rusza się przeciwnie)
-            document.getElementById('bg').style.transform = `translate(${x/-1.5}px, ${y/-3}px)`;
             
-            // Dane (Minimalny ruch)
-            document.getElementById('content').style.transform = `translate(${x/4}px, ${y/8}px)`;
-            
-            // Orzeł (Mocny ruch + efekt połysku/rotacji)
-            document.getElementById('eagle').style.transform = `translate(${x*1.8}px, ${y*1.2}px) rotateY(${x}deg)`;
-            
-            // Napis RP (Średni ruch)
-            document.getElementById('rp').style.transform = `translate(${x*0.6}px, ${y*0.6}px)`;
-        });
-    </script>
-</body>
-</html>
+            <div class="data-pane">
+                <div class="data-item"><div class="val" id="u-imie">Marta</div><div class="lab">Imię (Imiona)http://googleusercontent.com/generated_image_content/0
